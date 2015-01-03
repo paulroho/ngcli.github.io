@@ -1,5 +1,3 @@
-verview
-
 Angular cli is a command line interface to scaffold and build angular apps using nodejs style (commonJs) modules.
 
 Not only it provides you scalable project structure, instead it handles all common tedious tasks for you
@@ -8,11 +6,9 @@ out of the box.
 ## Goodies
 
 1. Nodejs style require module , so you can simply say
-
-```javascript
-require('controllers');
-```
-
+  ```javascript
+  require('controllers');
+  ```
 2. Support for coffeescript.
 3. Asset pipelining.
 4. Css Preprocessors.
@@ -98,7 +94,7 @@ Let's discuss these commands in detail
 ### new
 
 ```"markup
-ng new <path_to_project&gt;
+ng new <path_to_project>
 
 ```
 
@@ -143,7 +139,7 @@ ng new command is a combination of following hooks.
 3. **ng-scaffold-js** - To create required files in javascript.
 4. **ng-dependencies-install** - Install list of dependencies inside bower.json and welcome.json.
 
-Above hooks are bundled with angcli, whereas you can also add your own hooks which are just npm modules. You can read more about hooks inside <placeholder&gt; hooks section.
+Above hooks are bundled with angcli, whereas you can also add your own hooks which are just npm modules. You can read more about hooks inside <placeholder> hooks section.
 
 ### generate
 
@@ -161,11 +157,11 @@ will create 2 files
 Also, you can run
 
 ```"markup
-ng generate directive <name&gt;
-ng generate initializer <name&gt;
-ng generate filter <name&gt;
-ng generate service <name&gt;
-ng generate factory <name&gt;
+ng generate directive <name>
+ng generate initializer <name>
+ng generate filter <name>
+ng generate service <name>
+ng generate factory <name>
 ```
 
 ### test
@@ -181,7 +177,7 @@ Above will run karma unit tests.
 ### hook
 
 ```"markup
-ng hook <hook_name&gt;
+ng hook <hook_name>
 ```
 
 Run any hook using its name, make sure you have installed the hook you are about to execute.
@@ -243,7 +239,7 @@ means you cannot create controller inside index.js file.
 ```javascript
 /* @ngInject */
 module.exports = function($scope) {
-$scope.greeting = 'Hello world! This is ngCLI Boilerplate.';
+  $scope.greeting = 'Hello world! This is ngCLI Boilerplate.';
 };
 ```
 
@@ -280,9 +276,9 @@ Your app routes.
 var routeMap;
 
 routeMap = [{
-url: '/',
-templateUrl: "welcome.html",
-controller: 'welcomeCtrl'
+  url: '/',
+  templateUrl: "welcome.html",
+  controller: 'welcomeCtrl'
 }];
 
 module.exports = routeMap;
@@ -327,28 +323,28 @@ Angular cli config file , let's spend some time understanding this file
 
 ```
 {
-"preffered_coding_style": "Javascript",
-"css_preprocessor": "css",
-"app_name": "angularApp",
-"uglify_js": false,
-"prefix_css": true,
-"minify_css": true,
-"port": 3080,
-"host": "127.0.0.1",
-"live_reload": true,
-"run_server": true,
-"vendors": [
-{
-"angular-deferred-bootstrap": "angular-deferred-bootstrap"
-},
-{
-"angular": "angular"
-},
-{
-"angular-route": "angular-route"
-}
-],
-"hooks_to_ignore": []
+  "preffered_coding_style": "Javascript",
+  "css_preprocessor": "css",
+  "app_name": "angularApp",
+  "uglify_js": false,
+  "prefix_css": true,
+  "minify_css": true,
+  "port": 3080,
+  "host": "127.0.0.1",
+  "live_reload": true,
+  "run_server": true,
+  "vendors": [
+    {
+      "angular-deferred-bootstrap": "angular-deferred-bootstrap"
+    },
+    {
+      "angular": "angular"
+    },
+    {
+      "angular-route": "angular-route"
+    }
+  ],
+  "hooks_to_ignore": []
 }
 ```
 
@@ -480,18 +476,18 @@ Deciding which files will be part of vendor file is done using ngconfig.json ins
 
 ```
 "vendors": [
-{
-"angular-deferred-bootstrap": "angular-deferred-bootstrap"
-},
-{
-"angular": "angular"
-},
-{
-"angular-route": "angular-route"
-},
-{
-"ng-table": "ng-table"
-}
+  {
+    "angular-deferred-bootstrap": "angular-deferred-bootstrap"
+  },
+  {
+    "angular": "angular"
+  },
+  {
+    "angular-route": "angular-route"
+  },
+  {
+    "ng-table": "ng-table"
+  }
 ],
 ```
 
@@ -579,7 +575,7 @@ As angular cli uses node style modules every entity is a module and can be requi
 
 Now it can a tedious task to register entities urself by going back and forth again. This is very **ng-index-entities** hook comes into the picture.
 
-You can read more about ng-index-entities at <placeholder&gt;
+You can read more about ng-index-entities at <placeholder>
 
 ## Generators
 
