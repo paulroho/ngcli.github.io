@@ -634,21 +634,76 @@ module.exports = function($http){
 ```
 Here is the special syntax to access your constants anywhere inside your angular app. {@= LET.[constant_name] @} , and it will be replaced with the value of constant on build time ensuring there is no extra manipulation on runtime and it keeps your code dry.
 
-# Tutorials
+# Hooks
 
-## Quick Start
+## What are hooks ?
 
-## Generators
+Hooks are npm modules with special configuration to work with angular cli. Below is an example of hello world hook.
 
-## Serve
+**package.json**
 
-## Initializers
+```
+"ng-hook": {
+  "name": "ng-hello-world",
+  "hook-for": "build",
+  "weight": 1
+}  
+```
 
-## Unit Testing
+With above key value pair inside your package.json will help you in defining ng-hooks.
 
-# Snippets
+1. **name** - Name is required and should be unique.
+2. **hook-for** - Every hook is attached to some process/command, available commands.
+   * build
+   * serve
+   * new
+   * generate:controller
+   * generate:service
+   * generate:factory
+   * generate:service
+   * generate:filter
+   * generator:initializer
+   * test
+3. **weight** - Smaller the weight , earliest it will be executed.
+4. **after (optional)** - An array of hooks after which you want your hook to be executed.
 
-# FAQ
+## Using hooks
+
+You can browse and install hooks using npm , list of available hooks can be find here on [https://github.com/ngCli](https://github.com/ngCli).
+
+## Writing hooks
+
+Writing hook is pretty simple , all you need is an **init** method inside your index.js file and make that method return Promise and that's all. You can browse existing hooks for example.
+
+Sample hook file
+
+```javascript
+(function(){
+  "use strict";
+
+  var Promise = require("bluebird");
+  var Hook = function () {};
+  var hook = new Hook();
+
+  Hook.prototype.init = function(output,ngconfig,args,store){
+    var defer = Promise.defer();
+    /*
+      Your code goes here
+    */
+    return defer.promise;
+  };
+  module.exports = hook;
+
+}).call(this);
+
+```
+
+It accepts 4 arguments.
+
+1. **output** - Output of last hook
+2. **ngconfig** - ngconfig object.
+3. **args** - Command arguments
+4. **store** - Incremental store to save and fetch data from.
 
 # ChangeLog
 
