@@ -705,6 +705,10 @@ It accepts 4 arguments.
 3. **args** - Command arguments
 4. **store** - Incremental store to save and fetch data from.
 
+# Tutorials
+
+1. Angular Cli - Getting Started on http://amanvirk.me/angular-cli-getting-started/
+
 # ChangeLog
 
 ## Version 0.0.1
