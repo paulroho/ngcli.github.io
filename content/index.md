@@ -12,9 +12,9 @@ out of the box.
 2. Support for coffeescript.
 3. Asset pipelining.
 4. Css Preprocessors.
-* Less
-* Stylus
-* Compass
+  * Less
+  * Stylus
+  * Compass
 5. Auto annotated angular components, so you no more have to manage DI annotations
 
   ```javascript
@@ -33,7 +33,7 @@ out of the box.
 
 7. Testing First.
 8. Command line blueprints to get you up and running in seconds.
-9. nghooks to add your own conventions to angcli.
+9. ngcli addons to add your own conventions and build tasks to angcli.
 
 # Getting Started
 
@@ -46,7 +46,7 @@ ng version
 this will output the running version on your machine, something like -
 
 ```
-Version 0.0.1
+Version 0.0.3
 ```
 If above command worked fine and version on your machine matches to the current version at the top of this page, then you are good to go.
 
@@ -54,14 +54,6 @@ If above command worked fine and version on your machine matches to the current 
 
 Angular cli makes the best use of existing tools by bundling them together, i have listed all the required and optional tools which are required
 before you get your hands dirty with **angcli**.
-
-### gulp
-
-Gulp is quite similar to Grunt but with different approach, it uses streams to run build tasks. You can read more about gulp [here][5949351f]. Or simply install it.
-
-```"markup
-npm install -g gulp
-```
 
 ### bower
 
@@ -109,8 +101,10 @@ ng build
 Above command will build your project inside /dist folder, it outputs 3 different files and assets by default.
 
 * vendor.js (Concatenated 3rd party libraries).
+* vendor.css (Concatenated 3rd party css files).
 * app.js (Concatenated version of your controllers, directives and other entities. )
 * app.css (Concatenated version of styles).
+* index.html (Your main html file).
 
 ### serve
 
@@ -118,28 +112,6 @@ Above command will build your project inside /dist folder, it outputs 3 differen
 ng serve
 ```
 It works same as build command, in addition it runs a local server with livereload.
-
-### sync
-
-```"markup
-ng sync
-```
-
-Angular cli behind the scenes runs a series of hooks which empowers angcli commands, These hooks are bundled with angcli and can also be
-part of your app.
-
-In short hooks are npm modules with some special configuration and init method.
-
-For example
-
-ng new command is a combination of following hooks.
-
-1. **ng-project-blueprint** - To create project blueprint.
-2. **ng-scaffold-coffee** - To create required files in coffeescript.
-3. **ng-scaffold-js** - To create required files in javascript.
-4. **ng-dependencies-install** - Install list of dependencies inside bower.json and welcome.json.
-
-Above hooks are bundled with angcli, whereas you can also add your own hooks which are just npm modules. You can read more about hooks inside <placeholder> hooks section.
 
 ### generate
 
@@ -151,8 +123,8 @@ ng generate controller home
 
 will create 2 files
 
-1. **homeCtrl.js** inside /controllers
-2. **homeCtrl.test.js** inside /tests/spec/controllers
+1. **home.js** inside /controllers
+2. **home.js** inside /tests/spec/controllers
 
 Also, you can run
 
@@ -202,20 +174,24 @@ Angular cli follows simple/flat project structure.
 │ ├── styles/
 │ ├── templates/
 │ ├── app.js
+│ ├── index.html
 │ ├── constants.js
 │ ├── routes.js
-|── bower_components/
-|── core/
+│── bower_components/
+│── core/
 │ ├── boot.js
-|── dist/
-|── node_modules/
-|── tests/
-|── .jshintrc
-|── bower.json
-|── index.html
-|── karma.conf.js
-|── ngconfig.json
-|── package.json
+│── dist/
+│── vendors/
+│ ├── vendors.js
+│ ├── vendors.css
+│── node_modules/
+│── tests/
+│── .jshintrc
+│── bower.json
+│── karma.conf.js
+│── ngconfig.json
+│── webpack.config.js
+│── package.json
 
 ```
 
@@ -285,6 +261,11 @@ module.exports = routeMap;
 
 ```
 
+#### index.html
+
+Your app entry point .html file.
+
+
 ### core
 
 Core is something that ships with angcli, and for now it only contains one file boot.js, which bootstraps angular app.
@@ -298,8 +279,33 @@ Bower dependencies
 Build folder, this folder contains final build files which are
 
 * **vendor.js**
+* **vendor.css**
 * **app.js**
+* **index.html**
 * **app.css**
+
+### vendors
+
+Manages 3rd party dependencies.
+
+#### vendors.js
+
+require third party script files inside this file.
+
+```javascript
+require("angular");
+require("angular-route");
+```
+
+#### vendors.css
+
+require third party css files inside this file.
+
+```css
+@import url("/path/to/file");
+```
+All of the above imports will be inlined inside `dist/vendor.css`.
+
 
 ### node_modules
 
@@ -308,10 +314,6 @@ npm dependencies
 ### .jshintrc
 
 Jshint config file to lint js code
-
-### index.html
-
-Your app entry point .html file.
 
 ### karma.conf.json
 
@@ -323,43 +325,15 @@ Angular cli config file , let's spend some time understanding this file
 
 ```
 {
-  "preffered_coding_style": "Javascript",
-  "css_preprocessor": "css",
   "app_name": "angularApp",
-  "uglify_js": false,
-  "prefix_css": true,
-  "minify_css": true,
+  "uglify_js": true,
   "port": 3080,
-  "host": "127.0.0.1",
   "live_reload": true,
+  "lrPort": 35729,
   "run_server": true,
-  "vendors": [
-    {
-      "angular-deferred-bootstrap": "angular-deferred-bootstrap"
-    },
-    {
-      "angular": "angular"
-    },
-    {
-      "angular-route": "angular-route"
-    }
-  ],
-  "hooks_to_ignore": []
+  "host": "127.0.0.1"
 }
 ```
-
-#### preffered_coding_style
-
-It can be Javascript or Coffeescript
-
-#### css_preprocessor
-
-Which css preprocessor you want to use, possible values can be one of the following :-
-
-* css
-* stylus
-* compass
-* less
 
 #### app_name
 
@@ -370,13 +344,13 @@ files.
 
 Boolean whether to minfiy js or not.
 
-#### minify_css
-
-Boolean whether to minify css or not.
-
 #### port
 
 Server port number.
+
+#### lrPort
+
+Live Reload port number.
 
 #### host
 
@@ -390,13 +364,6 @@ Whether you want to reload server on file change.
 
 Serve files using inbuilt local server
 
-#### vendors
-
-Vendors are list of 3rd party libraries, it is very important to define them here, so that they will be part of vendor.js not app.js.
-
-#### hooks_to_ignore
-
-Array of hooks you want to ignore.
 
 # Ecosystem
 
@@ -410,14 +377,13 @@ Now we will talk about the ecosystem, which is very important to debug your apps
 
 ## CommonJs
 
-angcli uses [browserify][db0c6c83] , [debowerify][a31895cb] and [deamdify][294cda20] enabling node js style
-module require.
+angcli uses [webpack][db0c6c83] enabling node js style module require.
 
 3rd party vendor libraries get bundled inside dist/vendor.js, whereas your local app files becomes part of dist/app.js
 
 ## ngConfig
 
-ngConfig is the place where you app config lives in, it can be used for global settings like **app_name**, or can be used by hooks to specifiy local settings for example **auto_index** used by ng-index-entities.
+ngConfig is the place where your app config lives in, it can be used for global settings like **app_name**, or can be used by hooks to specifiy local settings for example **auto_index** used by ng-index-entities.
 
 As ngconfig is available to all hooks, it becomes the centric point to manage all settings.
 
@@ -456,43 +422,21 @@ boot(["ngTable"]);
 ```
 and you are good to go.
 
-## Ignoring Hooks
-
-ng-hooks have no idea about you and your project, instead they have been created using industry specific conventions. At time you may start hating some hook as you are trying to achieve something else. You can easily turn off that hook inside your ngconfig.json file.
-
-**ngconfig.json**
-
-```
-"hooks-to-ignore": ["ng-index-entities"] // example
-```
-
 You can simply pass the name of hook you want to disable permanently for this project. You may reference npm to find hook-name.
 
 ## Understanding Vendors
 
 It is really important to understand the difference between **dist/vendor.js** and **dist/app.js**, all 3rd libraries using bower should be part of vendor.js resulting in faster incremental builds and all local source files should be part of app.js.
 
-Deciding which files will be part of vendor file is done using ngconfig.json inside vendors key.
+Deciding which files will be part of vendor file is done using vendors/vendors.js inside vendors key.
 
 ```
-"vendors": [
-  {
-    "angular-deferred-bootstrap": "angular-deferred-bootstrap"
-  },
-  {
-    "angular": "angular"
-  },
-  {
-    "angular-route": "angular-route"
-  },
-  {
-    "ng-table": "ng-table"
-  }
-],
+require("angular");
+require("angular-routes");
+...
 ```
 
-Left hand side assignment is the name of the folder inside bower_components whereas right side assignment is the key you
-want to use in order to require this library. Any library which is not mentioned inside this file will be bundled with app.js (which is not recommended).
+Requires mentioned inside `vendors/vendors.js` will be bundled inside dist/vendors.js .
 
 ## Initializers
 
@@ -553,7 +497,7 @@ Let's take this example
 
 ```javascript
 /**
-@name: homeCtrl
+@name: homeController
 */
 /*@ngInject*/
 module.exports = function($scope){
@@ -573,9 +517,7 @@ app.controller('homeCtrl',require('./home'));
 
 As angular cli uses node style modules every entity is a module and can be require anywhere, now in order to tell angular that home.js is a homeCtrl we need to register this as a controller, this is what we do inside index.js file inside the root of every entity.
 
-Now it can a tedious task to register entities urself by going back and forth again. This is very **ng-index-entities** hook comes into the picture.
-
-You can read more about ng-index-entities at <placeholder>
+Now it can a tedious task to register entities urself by going back and forth again.So generator auto index entities for you.
 
 ## Generators
 
@@ -590,16 +532,15 @@ Generators helps you in creating entities right from your command line and below
 
 ## Build
 
-Building your source files into a bundle is done using gulp and browserify.
+Building your source files into a bundle is done using broccoli and webpack.
 
-### Browserify
+### WebPack
 
-Browserify converts commonjs modules to something what browsers understands, it makes use of debowerify and deamdify to
-make sure all bundled modules are well transformed for browsers.
+Webpack converts commonjs modules to something what browsers understands. 
 
-### Gulp
+### Broccoli Js
 
-Gulp is responsible for running all build tasks, even browserify transformations is a part of gulp task. All tasks are part of ng-task-runner.
+Broccoli Js is responsible for running all build tasks, even webpack transformations are part of broccoli tasks.
 
 ## Constants
 
@@ -711,6 +652,58 @@ It accepts 4 arguments.
 
 # ChangeLog
 
+## Version 0.0.3
+
+1. Changed ngconfig , removed pre-defined options
+
+**Old File**
+  ```
+{
+    "preffered_coding_style": "Javascript",
+    "css_preprocessor": "compass",
+    "app_name": "angularApp",
+    "uglify_js": true,
+    "prefix_css": true,
+    "minify_css": true,
+    "port": 3080,
+    "live_reload": true,
+    "run_server": true,
+    "host": "127.0.0.1",
+    "vendors": [
+        {
+            "angular-deferred-bootstrap": "angular-deferred-bootstrap"
+        },
+        {
+            "angular": "angular"
+        },
+        {
+            "angular-route": "angular-route"
+        }
+    ],
+    "hooks-to-ignore": []
+}
+  ```
+**New File**
+
+```
+{
+  "app_name": "angularApp",
+  "uglify_js": true,
+  "port": 3080,
+  "live_reload": true,
+  "lrPort": 35729,
+  "run_server": true,
+  "host": "127.0.0.1"
+}
+```
+
+2. Replaced browserify with [webpack][db0c6c83].
+3. Replace [gulp][5949351f] with [broccoli][db0c6c84].
+4. Added vendors folder with vendors.js and vendors.css .
+5. Added support to create ngcli-addons.
+6. Removed ng-hooks ignore options.
+
+
 ## Version 0.0.1
 
 1. Ability to run hooks in sequence depending upon their weight and after dependency.
@@ -726,6 +719,5 @@ It accepts 4 arguments.
 
 [5949351f]: http://gulpjs.com/ "here"
 [f65bad8b]: http://bower.io/ "http://bower.io/"
-[294cda20]: https://github.com/jaredhanson/deamdify "deamdify"
-[a31895cb]: https://github.com/eugeneware/debowerify "debowerify"
-[db0c6c83]: http://browserify.org/ "browserify"
+[db0c6c83]: http://webpack.github.io/docs/ "webpack"
+[db0c6c84]: https://github.com/broccolijs/broccoli "broccolijs"
